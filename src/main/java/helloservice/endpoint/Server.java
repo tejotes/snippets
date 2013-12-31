@@ -23,7 +23,7 @@ public class Server {
         System.out.println((new Date())+": Server started...");
 
         while (true) {
-            Thread.sleep(60 * 1_000L);
+            Thread.sleep(60000L);
             System.out.println((new Date())+": Server is still up.");
         }
     }

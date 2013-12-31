@@ -30,13 +30,23 @@ public class Client {
 
     public static void main(String args[]) throws Exception {
 
-        Client client = new Client();
-
         for (int i = 0; i < 10; i++) {
-            long startMillis = System.currentTimeMillis();
-            String result = client.go();
-            long durationMillis = System.currentTimeMillis() - startMillis;
-            System.out.printf("%05d %5dms: %s\n", i, durationMillis, result);
+            Thread t = new Thread( new Runnable() {
+                @Override
+                public void run() {
+                    Client client = null;
+                    try {
+                        client = new Client();
+                        long startMillis = System.currentTimeMillis();
+                        String result = client.go();
+                        long durationMillis = System.currentTimeMillis() - startMillis;
+                        System.out.printf("%5dms: %s\n", durationMillis, result);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+           t.start();
         }
     }
 
