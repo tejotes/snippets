@@ -17,9 +17,9 @@ public class Client {
     Service service = null;
     Hello client = null;
 
-    public Client() throws Exception {
+    public Client(String hostname) throws Exception {
         long startMillis = System.currentTimeMillis();
-        url = new URL("http://3570k:9000/SoapContext/SoapPort?wsdl");
+        url = new URL(String.format("http://%s:9000/SoapContext/SoapPort?wsdl",hostname));
         qname = new QName("http://endpoint.helloservice/", "HelloService");
         service = Service.create(url, qname);
         client = service.getPort(Hello.class);
@@ -27,12 +27,18 @@ public class Client {
         System.out.printf("%5dms: ws-client created.\n", durationMillis);
     }
 
+    public Client() throws Exception {
+        this("localhost");
+    }
+
     public String go() {
-        String result = (Math.random() < 0.95) ? client.sayHello("Thomas") : client.sayBye("Thomas");
+        String result = (Math.random() < 0.1) ? client.sayHello("Thomas") : client.sayBye("Thomas");
         return result;
     }
 
     public static void main(String args[]) throws Exception {
+
+        final String hostname = (args.length > 0) ? args[0] : "localhost";
 
         for (int i = 0; i < 10; i++) {
             Thread t = new Thread( new Runnable() {
@@ -40,7 +46,7 @@ public class Client {
                 public void run() {
                     Client client = null;
                     try {
-                        client = new Client();
+                        client = new Client(hostname);
                         for (int i = 10; i > 0; i--) {
                             long startMillis = System.currentTimeMillis();
                             String result = client.go();
