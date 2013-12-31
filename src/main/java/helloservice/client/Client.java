@@ -3,6 +3,7 @@ package helloservice.client;
 import helloservice.Hello;
 
 import javax.xml.namespace.QName;
+import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
 import java.net.URL;
 
@@ -17,16 +18,19 @@ public class Client {
     Hello client = null;
 
     public Client() throws Exception {
+        long startMillis = System.currentTimeMillis();
         url = new URL("http://3570k:9000/SoapContext/SoapPort?wsdl");
         qname = new QName("http://endpoint.helloservice/", "HelloService");
         service = Service.create(url, qname);
         client = service.getPort(Hello.class);
+        long durationMillis = System.currentTimeMillis() - startMillis;
+        System.out.printf("%5dms: ws-client created.\n", durationMillis);
     }
 
     public String go() {
-        return client.sayHello("Thomas");
+        String result = (Math.random() < 0.95) ? client.sayHello("Thomas") : client.sayBye("Thomas");
+        return result;
     }
-
 
     public static void main(String args[]) throws Exception {
 
@@ -37,10 +41,12 @@ public class Client {
                     Client client = null;
                     try {
                         client = new Client();
-                        long startMillis = System.currentTimeMillis();
-                        String result = client.go();
-                        long durationMillis = System.currentTimeMillis() - startMillis;
-                        System.out.printf("%5dms: %s\n", durationMillis, result);
+                        for (int i = 10; i > 0; i--) {
+                            long startMillis = System.currentTimeMillis();
+                            String result = client.go();
+                            long durationMillis = System.currentTimeMillis() - startMillis;
+                            System.out.printf("%02d %5dms: %s\n", i, durationMillis, result);
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

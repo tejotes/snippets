@@ -24,7 +24,7 @@ public interface Hello {
      * @param name
      * @return returns java.lang.String
      */
-//    @WebMethod
     public String sayHello(/*@WebParam*/ String name);
 
+    public String sayBye(String name);
 }
